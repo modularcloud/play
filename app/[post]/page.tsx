@@ -12,7 +12,9 @@ type SinglePostpageProps = {
   };
 };
 
-export function SinglePostpage({ params: { post } }: SinglePostpageProps) {
+export default function SinglePostpage({
+  params: { post }
+}: SinglePostpageProps) {
   return (
     <main>
       <h1>Single Post</h1>
