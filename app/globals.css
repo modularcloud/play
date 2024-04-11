@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+@layer base {
   :root {
     --color-foreground: 236 15% 16%;
     --color-neutral: 224 11% 45%;

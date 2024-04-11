@@ -6,7 +6,8 @@ import {
   text,
   integer,
   varchar,
-  index
+  index,
+  bigint
 } from "drizzle-orm/pg-core";
 
 // Use this object to send drizzle queries to your DB
@@ -30,7 +31,7 @@ export const PostsTable = pgTable(
         onDelete: "cascade"
       })
       .notNull(),
-    created_at: integer("created_at").notNull()
+    created_at: bigint("created_at", { mode: "number" }).notNull()
   },
   (table) => ({
     created_at_idx: index("post_created_idx").on(table.created_at)
@@ -52,7 +53,7 @@ export const ReplyTable = pgTable(
         onDelete: "cascade"
       })
       .notNull(),
-    created_at: integer("created_at").notNull()
+    created_at: bigint("created_at", { mode: "number" }).notNull()
   },
   (table) => ({
     created_at_idx: index("reply_created_idx").on(table.created_at)

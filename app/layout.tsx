@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { GeistSans } from "geist/font/sans";
-import { TailwindIndicator } from "~/components/tailwind-indicator";
 
 export const metadata: Metadata = {
   title: {
@@ -12,18 +11,15 @@ export const metadata: Metadata = {
 };
 
 export const runtime = "edge";
-export default function RootLayout({
+
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={GeistSans.className}>
-        {children}
-
-        <TailwindIndicator />
-      </body>
+      <body className={GeistSans.className}>{children}</body>
     </html>
   );
 }
