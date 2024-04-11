@@ -64,20 +64,18 @@ export async function createPost(_: any, formData: FormData) {
 }
 
 const createReplySchema = z.object({
-  contents: z.string().min(1).max(256)
+  contents: z.string().min(1).max(256),
+  parentId: z.coerce.number()
 });
 
-export async function createReply(
-  parentId: number,
-  _: any,
-  formData: FormData
-) {
+export async function createReply(_: any, formData: FormData) {
   const parseResult = createReplySchema.safeParse(Object.fromEntries(formData));
 
   if (!parseResult.success) {
     return parseResult.error.flatten();
   }
 
+  const parentId = parseResult.data.parentId;
   const user = await getCurrentUser();
 
   await db.insert(ReplyTable).values({

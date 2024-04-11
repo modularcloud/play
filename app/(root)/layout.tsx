@@ -14,8 +14,8 @@ export default async function AppLayout({
   const user = await getCurrentUser();
 
   return (
-    <div className="flex flex-col min-h-lvh max-h-lvh">
-      <header className="fixed left-4.5 top-4.5 bg-muted-100">
+    <div className="flex flex-col min-h-lvh max-h-lvh bg-muted-100">
+      <header className="fixed left-4.5 top-4.5">
         <Link href="/">
           <Image
             src="/mc-app-icon.png"

@@ -2,7 +2,7 @@ import * as React from "react";
 import type { Metadata } from "next";
 import { Loader, MoveLeft } from "lucide-react";
 import { PostsTable, ReplyTable, UsersTable, db } from "~/lib/db";
-import { desc, eq, sql } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PostCard } from "~/components/post-card";
@@ -26,7 +26,10 @@ export default function SinglePostpage({
 }: SinglePostpageProps) {
   return (
     <div className="relative py-14">
-      <Link href="/" className="text-muted underline flex items-center gap-1">
+      <Link
+        href="/"
+        className="text-muted underline flex items-center gap-1 fixed top-16 left-5"
+      >
         <MoveLeft className="h-4 w-4" />
         <span>Back to Feed</span>
       </Link>
@@ -81,7 +84,7 @@ async function SinglePost({ postId }: { postId: number }) {
         .innerJoin(PostsTable, eq(PostsTable.id, ReplyTable.parent_id))
         .innerJoin(UsersTable, eq(UsersTable.id, PostsTable.author_id))
         .where(eq(PostsTable.id, postId))
-        .orderBy(desc(ReplyTable.created_at));
+        .orderBy(asc(ReplyTable.created_at));
       return { post, replyList };
     },
     {
