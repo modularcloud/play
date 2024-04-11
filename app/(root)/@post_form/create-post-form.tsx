@@ -33,7 +33,7 @@ export function CreatePostForm({}: CreatePostFormProps) {
         />
 
         <div className="h-12 text-left pr-20">
-          {errors && <p className="text-red-400">{errors}</p>}
+          {errors && <p className="text-red-500">{errors}</p>}
         </div>
       </div>
 

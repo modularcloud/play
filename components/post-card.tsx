@@ -22,11 +22,17 @@ export function PostCard({ post, className }: PostCardProps) {
       <div className="border-b border-muted/20 flex flex-col gap-1 font-medium py-3.5 px-4.5">
         {post.author.name ? (
           <>
-            <h2>{post.author.name}</h2>
-            <small className="text-muted">({post.author.address})</small>
+            <h2 className="text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full">
+              {post.author.name}
+            </h2>
+            <small className="text-muted text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full">
+              ({post.author.address})
+            </small>
           </>
         ) : (
-          <h2>{post.author.address}</h2>
+          <h2 className="text-ellipsis whitespace-nowrap overflow-x-hidden flex-shrink flex-grow-0 max-w-full">
+            {post.author.address}
+          </h2>
         )}
       </div>
 

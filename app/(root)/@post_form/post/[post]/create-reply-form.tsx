@@ -37,7 +37,7 @@ export function CreateReplyForm({ parentId }: CreateReplyFormProps) {
         />
 
         <div className="h-10 text-left pr-20 flex items-center">
-          {errors && <p className="text-red-400">{errors}</p>}
+          {errors && <p className="text-red-500">{errors}</p>}
         </div>
       </div>
 
