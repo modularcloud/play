@@ -34,6 +34,40 @@ export async function getPoints(_: any, formData: FormData) {
   };
 }
 
+const settingsSchema = z.object({
+  name: z.string().min(1).max(40)
+});
+
+export async function updateSettings(_: any, formData: FormData) {
+  const parseResult = settingsSchema.safeParse(Object.fromEntries(formData));
+
+  if (!parseResult.success) {
+    return parseResult.error.flatten();
+  }
+
+  const user = await getCurrentUser();
+
+  await db
+    .update(UsersTable)
+    .set({
+      name: parseResult.data.name
+    })
+    .where(eq(UsersTable.address, user.address));
+
+  revalidatePath("/");
+
+  for (const tag of cacheKeys.posts.list()) {
+    revalidateTag(tag);
+  }
+  for (const tag of cacheKeys.posts.detail()) {
+    revalidateTag(tag);
+  }
+
+  return {
+    success: true
+  };
+}
+
 const createPostSchema = z.object({
   contents: z.string().min(1).max(256)
 });
@@ -54,7 +88,7 @@ export async function createPost(_: any, formData: FormData) {
   });
 
   revalidatePath("/");
-  for (const tag of cacheKeys.posts.all()) {
+  for (const tag of cacheKeys.posts.list()) {
     revalidateTag(tag);
   }
 
@@ -86,12 +120,11 @@ export async function createReply(_: any, formData: FormData) {
   });
 
   revalidatePath("/");
-  for (const tag of cacheKeys.posts.all()) {
+  for (const tag of cacheKeys.posts.list()) {
     revalidateTag(tag);
   }
-  for (const tag of cacheKeys.posts.single(parentId)) {
-    revalidateTag(tag);
-  }
+  const [__, singleTag] = cacheKeys.posts.single(parentId);
+  revalidateTag(singleTag);
 
   return {
     success: true

@@ -70,11 +70,18 @@ async function HomeContents() {
       return postList;
     },
     {
-      tags: cacheKeys.posts.all()
+      tags: cacheKeys.posts.list()
     }
   );
   const posts = await getPosts();
-  return (
+  return posts.length === 0 ? (
+    <div className="mx-auto py-14 text-center">
+      <div className="text-center">
+        <h2 className="text-xl font-medium">Not posts yet 😢</h2>
+        <p className="text-muted italic">you can still write one</p>
+      </div>
+    </div>
+  ) : (
     <ul className="mx-auto overflow-y-auto py-14">
       {posts.map((post) => (
         <li key={post.id} className="w-full">

@@ -16,7 +16,7 @@ export const db = drizzle(sql, { logger: true });
 export const UsersTable = pgTable("users", {
   id: serial("id").primaryKey(),
   address: varchar("address", { length: 48 }).notNull().unique(),
-  name: varchar("name", { length: 40 }),
+  name: varchar("name", { length: 41 }),
   points: integer("points").notNull().default(0),
   email: varchar("email")
 });

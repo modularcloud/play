@@ -106,11 +106,22 @@ async function SinglePost({ postId }: { postId: number }) {
         <PostCard post={{ ...post, replyCount: replyList.length }} />
       </li>
 
-      {replyList.map((reply) => (
-        <li key={`reply-${reply.id}`} className="w-full">
-          <PostCard post={{ ...reply, replyCount: 0 }} className="w-[29rem]" />
-        </li>
-      ))}
+      {replyList.length === 0 ? (
+        <div className="flex gap-2 justify-center items-center text-muted">
+          <div className="h-px bg-muted/40 w-10" />
+          <span className="italic">No reply yet</span>
+          <div className="h-px bg-muted/40 w-10" />
+        </div>
+      ) : (
+        replyList.map((reply) => (
+          <li key={`reply-${reply.id}`} className="w-full">
+            <PostCard
+              post={{ ...reply, replyCount: 0 }}
+              className="w-[29rem]"
+            />
+          </li>
+        ))
+      )}
     </ul>
   );
 }

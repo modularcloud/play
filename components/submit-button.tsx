@@ -13,12 +13,19 @@ export function SubmitButton({ className, ...props }: SubmitButtonProps) {
   const { pending } = useFormStatus();
   return (
     <button
+      {...props}
       className={cn(
-        "absolute bottom-2 right-2 bg-blue-500 text-white px-2 rounded-md py-1.5 text-sm flex items-center gap-1",
-        "focus:outline-none focus:ring-2 focus:border-blue-500"
+        "bg-blue-500 text-white px-2 rounded-md py-1.5 text-sm flex items-center gap-1 justify-center",
+        "focus:outline-none focus:ring-2 focus:border-blue-500 ring-blue-500/50",
+        className
       )}
       type="submit"
-      disabled={pending}
+      aria-disabled={pending}
+      onClick={(e) => {
+        if (pending) {
+          e.preventDefault();
+        }
+      }}
     >
       {pending && <Loader className="h-4 w-4 animate-spin" />}
       <span>{pending ? "Submitting..." : "Submit"}</span>

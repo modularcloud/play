@@ -27,6 +27,10 @@ export function CreateReplyForm({ parentId }: CreateReplyFormProps) {
       <div className="w-full  flex flex-col gap-2 border rounded-md border-muted/20 p-2 focus-within:ring-2 ring-blue-500/50 focus-within:border-blue-500">
         <input type="hidden" name="parentId" defaultValue={parentId} readOnly />
 
+        <label htmlFor="contents" className="sr-only">
+          Contents of your reply
+        </label>
+
         <textarea
           name="contents"
           id="contents"
@@ -34,14 +38,19 @@ export function CreateReplyForm({ parentId }: CreateReplyFormProps) {
           rows={2}
           placeholder="Add a reply"
           required
+          aria-invalid={!!errors}
         />
 
-        <div className="h-10 text-left pr-20 flex items-center">
+        <div
+          className="h-10 text-left pr-20 flex items-center"
+          id="content-error"
+          aria-live="polite"
+        >
           {errors && <p className="text-red-500">{errors}</p>}
         </div>
       </div>
 
-      <SubmitButton />
+      <SubmitButton className="absolute bottom-2 right-2 " />
     </form>
   );
 }

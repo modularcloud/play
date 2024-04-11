@@ -1,6 +1,8 @@
 export const cacheKeys = {
   posts: {
-    all: () => ["POSTS"],
-    single: (id: number) => [`POST_SINGLE-${id.toString()}`]
+    list: () => ["POSTS"] as const,
+    detail: () => ["POST_SINGLE"],
+    single: (id: number) =>
+      [...cacheKeys.posts.detail(), `POST-${id.toString()}`] as const
   }
 } as const;
