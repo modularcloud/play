@@ -10,6 +10,7 @@
     "db:push": "set -a; . ./.env.local; set +a && drizzle-kit push:pg"
   },
   "dependencies": {
+    "@vercel/kv": "^1.0.1",
     "@vercel/postgres": "^0.8.0",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.30.7",
@@ -21,6 +22,7 @@
     "server-only": "^0.0.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -28,6 +30,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
     "autoprefixer": "^10.0.1",
     "drizzle-kit": "^0.20.14",
     "eslint": "^8",
