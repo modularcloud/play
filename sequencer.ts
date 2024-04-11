@@ -1,11 +1,14 @@
 function seq(action: "enqueue" | "context" | "next", data?: any) {
-  return fetch(`${process.env.SEQUENCER_URL}/${action}`, {
+  console.log("Sequencer", action, data);
+  const response = fetch(`${process.env.SEQUENCER_URL}/${action}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
     },
     body: data ? JSON.stringify(data) : undefined,
-  });
+  }).then((res) => res.json());
+  console.log("Sequencer response", response);
+  return response
 }
 
 export const Sequencer = {

@@ -3,6 +3,7 @@ import { createWallet, getAddress } from "./auth";
 import { Sequencer } from "./sequencer";
 
 export async function middleware(request: NextRequest) {
+  console.log("middleware");
   const fromSequencer =
     request.headers.get("x-sequencer") === process.env.SEQUENCER_SECRET;
   const readRequest = request.method === "GET" || request.method === "HEAD";
