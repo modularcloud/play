@@ -118,6 +118,7 @@ async function SinglePost({ postId }: { postId: number }) {
             <PostCard
               post={{ ...reply, replyCount: 0 }}
               className="w-[29rem]"
+              isReply
             />
           </li>
         ))
