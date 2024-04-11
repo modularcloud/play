@@ -25,7 +25,7 @@ export default async function AppLayout({
           />
         </Link>
       </header>
-      <main className="container flex-grow overflow-y-auto">{children}</main>
+      <main className="flex-grow overflow-y-auto">{children}</main>
 
       {process.env.NODE_ENV !== "production" && <TailwindIndicator />}
       <Footer user={user} form={post_form} />

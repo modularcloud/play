@@ -86,6 +86,9 @@ export async function createReply(_: any, formData: FormData) {
   });
 
   revalidatePath("/");
+  for (const tag of cacheKeys.posts.all()) {
+    revalidateTag(tag);
+  }
   for (const tag of cacheKeys.posts.single(parentId)) {
     revalidateTag(tag);
   }
