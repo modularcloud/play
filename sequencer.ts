@@ -13,7 +13,17 @@ async function seq(action: "enqueue" | "context" | "next", data?: any) {
       "content-type": "application/json"
     },
     body: body
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    const textBody = await res.text();
+    console.log({
+      "Sequencer response": {
+        textBody,
+        status: res.status,
+        statusText: res.statusText
+      }
+    });
+    return JSON.parse(textBody);
+  });
   console.log({
     "Sequencer response": response
   });
