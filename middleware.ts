@@ -7,6 +7,7 @@ export async function middleware(request: NextRequest) {
   const fromSequencer =
     request.headers.get("x-sequencer") === process.env.SEQUENCER_SECRET;
   const readRequest = request.method === "GET" || request.method === "HEAD";
+
   if (!fromSequencer && !readRequest) {
     let session = request.cookies.get("session")?.value;
     let address: string | null = null;
@@ -24,25 +25,24 @@ export async function middleware(request: NextRequest) {
       headers: {
         "content-type": request.headers.get("content-type"),
         "next-action": request.headers.get("next-action"),
-        "next-router-state-tree": request.headers.get(
-          "next-router-state-tree"
-        ),
+        "next-router-state-tree": request.headers.get("next-router-state-tree")
       },
       body,
       address
-    })
+    });
     const response = await fetch(request.url, {
       method: request.method,
       headers: {
-        "cookie": `session=${session};`,
+        cookie: `session=${session};`,
         "content-type": request.headers.get("content-type"),
         "next-action": request.headers.get("next-action"),
-        "next-router-state-tree": request.headers.get("next-router-state-tree"),
+        "next-router-state-tree": request.headers.get("next-router-state-tree")
       } as any,
-      body,
+      body
     });
     await Sequencer.next();
     response.headers.set("set-cookie", `session=${session};`);
+    console.log({ response });
     return response;
   }
 }

@@ -1,14 +1,23 @@
-function seq(action: "enqueue" | "context" | "next", data?: any) {
-  console.log("Sequencer", action, data);
-  const response = fetch(`${process.env.SEQUENCER_URL}/${action}`, {
+async function seq(action: "enqueue" | "context" | "next", data?: any) {
+  const body = data ? JSON.stringify(data) : undefined;
+  console.log({
+    Sequencer: {
+      url: `${process.env.SEQUENCER_URL}/${action}`,
+      action,
+      data: body
+    }
+  });
+  const response = await fetch(`${process.env.SEQUENCER_URL}/${action}`, {
     method: "POST",
     headers: {
-      "content-type": "application/json",
+      "content-type": "application/json"
     },
-    body: data ? JSON.stringify(data) : undefined,
+    body: body
   }).then((res) => res.json());
-  console.log("Sequencer response", response);
-  return response
+  console.log({
+    "Sequencer response": response
+  });
+  return response;
 }
 
 export const Sequencer = {
@@ -26,5 +35,5 @@ export const Sequencer = {
     }
     await seq("context", payload);
     return payload;
-  },
+  }
 };
