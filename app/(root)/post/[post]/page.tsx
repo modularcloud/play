@@ -96,11 +96,7 @@ async function SinglePost({ postId }: { postId: number }) {
                 parent_id: PostsTable.parent_id
               })
               .from(PostsTable)
-              .innerJoin(
-                alias(PostsTable, "parent"),
-                eq(PostsTable.id, PostsTable.parent_id)
-              )
-              .where(sql`${PostsTable.id} in ${replyIdList}`);
+              .where(sql`${PostsTable.parent_id} in ${replyIdList}`);
 
       const replyList = replies.map((p) => {
         const replyCount = repliesToReplyList.filter(

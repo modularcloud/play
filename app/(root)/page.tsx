@@ -55,17 +55,13 @@ async function HomeContents() {
           : await db
               .selectDistinct({
                 id: PostsTable.id,
-                post_id: PostsTable.id
+                parent_id: PostsTable.parent_id
               })
               .from(PostsTable)
-              .innerJoin(
-                alias(PostsTable, "parent"),
-                eq(PostsTable.id, PostsTable.parent_id)
-              )
-              .where(sql`${PostsTable.id} in ${postid_list}`);
+              .where(sql`${PostsTable.parent_id} in ${postid_list}`);
 
       const postList = posts.map((p) => {
-        const replyCount = replyList.filter((r) => r.post_id === p.id).length;
+        const replyCount = replyList.filter((r) => r.parent_id === p.id).length;
 
         return {
           ...p,
