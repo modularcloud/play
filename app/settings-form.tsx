@@ -49,6 +49,7 @@ export function SettingsForm({
         type="text"
         name="name"
         id="name"
+        autoFocus
         required
         defaultValue={defaultName ?? ""}
         placeholder="John doe"
