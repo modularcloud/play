@@ -9,10 +9,9 @@ export type PostCardProps = {
     author: Pick<User, "address" | "name">;
   };
   className?: string;
-  isReply?: boolean;
 };
 
-export function PostCard({ post, className, isReply = false }: PostCardProps) {
+export function PostCard({ post, className }: PostCardProps) {
   return (
     <div
       className={cn(
@@ -42,20 +41,13 @@ export function PostCard({ post, className, isReply = false }: PostCardProps) {
       </blockquote>
 
       <div className="text-end text-gray-600 py-2.5 px-4.5">
-        {!isReply ? (
-          <Link
-            href={`/post/${post.id}`}
-            className="underline cursor-pointer flex items-center gap-1 justify-end"
-          >
-            <MessageCircleMore className="h-4 w-4" />
-            <span>{post.replyCount} replies</span>
-          </Link>
-        ) : (
-          <span className="flex items-center gap-1 justify-end">
-            <MessageCircleMore className="h-4 w-4" />
-            <span>{post.replyCount} replies</span>
-          </span>
-        )}
+        <Link
+          href={`/post/${post.id}`}
+          className="underline cursor-pointer flex items-center gap-1 justify-end"
+        >
+          <MessageCircleMore className="h-4 w-4" />
+          <span>{post.replyCount} replies</span>
+        </Link>
       </div>
     </div>
   );

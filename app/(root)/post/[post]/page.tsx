@@ -1,13 +1,14 @@
 import * as React from "react";
 import type { Metadata } from "next";
 import { Loader, MoveLeft } from "lucide-react";
-import { PostsTable, ReplyTable, UsersTable, db } from "~/lib/db";
-import { asc, eq } from "drizzle-orm";
+import { PostsTable, UsersTable, db } from "~/lib/db";
+import { asc, eq, sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PostCard } from "~/components/post-card";
 import { nextCache } from "~/lib/next-cache";
 import { cacheKeys } from "~/lib/cache-keys";
+import { alias } from "drizzle-orm/pg-core";
 
 export function generateMetadata(props: SinglePostpageProps): Metadata {
   return {
@@ -69,22 +70,48 @@ async function SinglePost({ postId }: { postId: number }) {
         return null;
       }
 
-      const replyList = await db
+      const replies = await db
         .selectDistinct({
-          id: ReplyTable.id,
-          post_id: PostsTable.id,
-          contents: ReplyTable.contents,
-          created_at: ReplyTable.created_at,
+          id: PostsTable.id,
+          contents: PostsTable.contents,
+          created_at: PostsTable.created_at,
           author: {
             address: UsersTable.address,
             name: UsersTable.name
           }
         })
-        .from(ReplyTable)
-        .innerJoin(PostsTable, eq(PostsTable.id, ReplyTable.parent_id))
-        .innerJoin(UsersTable, eq(UsersTable.id, ReplyTable.author_id))
-        .where(eq(PostsTable.id, postId))
-        .orderBy(asc(ReplyTable.created_at));
+        .from(PostsTable)
+        .innerJoin(UsersTable, eq(UsersTable.id, PostsTable.author_id))
+        .where(eq(PostsTable.parent_id, postId))
+        .orderBy(asc(PostsTable.created_at));
+
+      const replyIdList = replies.map((r) => r.id);
+
+      const repliesToReplyList =
+        replies.length === 0
+          ? []
+          : await db
+              .selectDistinct({
+                id: PostsTable.id,
+                parent_id: PostsTable.parent_id
+              })
+              .from(PostsTable)
+              .innerJoin(
+                alias(PostsTable, "parent"),
+                eq(PostsTable.id, PostsTable.parent_id)
+              )
+              .where(sql`${PostsTable.id} in ${replyIdList}`);
+
+      const replyList = replies.map((p) => {
+        const replyCount = repliesToReplyList.filter(
+          (r) => r.parent_id === p.id
+        ).length;
+
+        return {
+          ...p,
+          replyCount
+        };
+      });
       return { post, replyList };
     },
     {
@@ -115,11 +142,7 @@ async function SinglePost({ postId }: { postId: number }) {
       ) : (
         replyList.map((reply) => (
           <li key={`reply-${reply.id}`} className="w-full">
-            <PostCard
-              post={{ ...reply, replyCount: 0 }}
-              className="w-[29rem]"
-              isReply
-            />
+            <PostCard post={{ ...reply }} className="w-[29rem]" />
           </li>
         ))
       )}

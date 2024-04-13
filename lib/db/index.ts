@@ -7,7 +7,8 @@ import {
   integer,
   varchar,
   index,
-  bigint
+  bigint,
+  type AnyPgColumn
 } from "drizzle-orm/pg-core";
 
 // Use this object to send drizzle queries to your DB
@@ -31,6 +32,12 @@ export const PostsTable = pgTable(
         onDelete: "cascade"
       })
       .notNull(),
+    parent_id: integer("parent_id").references(
+      (): AnyPgColumn => PostsTable.id,
+      {
+        onDelete: "cascade"
+      }
+    ),
     created_at: bigint("created_at", { mode: "number" }).notNull()
   },
   (table) => ({
@@ -38,28 +45,5 @@ export const PostsTable = pgTable(
   })
 );
 
-export const ReplyTable = pgTable(
-  "replies",
-  {
-    id: serial("id").primaryKey(),
-    contents: varchar("contents", { length: 256 }).notNull(),
-    author_id: integer("author_id")
-      .references(() => UsersTable.id, {
-        onDelete: "cascade"
-      })
-      .notNull(),
-    parent_id: integer("parent_id")
-      .references(() => PostsTable.id, {
-        onDelete: "cascade"
-      })
-      .notNull(),
-    created_at: bigint("created_at", { mode: "number" }).notNull()
-  },
-  (table) => ({
-    created_at_idx: index("reply_created_idx").on(table.created_at)
-  })
-);
-
 export type User = typeof UsersTable.$inferSelect;
 export type Post = typeof PostsTable.$inferSelect;
-export type Reply = typeof ReplyTable.$inferSelect;

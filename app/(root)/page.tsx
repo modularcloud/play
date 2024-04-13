@@ -2,11 +2,12 @@ import * as React from "react";
 
 import { desc, eq, sql } from "drizzle-orm";
 import type { Metadata } from "next";
-import { PostsTable, ReplyTable, UsersTable, db } from "~/lib/db";
+import { PostsTable, UsersTable, db } from "~/lib/db";
 import { Loader } from "lucide-react";
 import { PostCard } from "~/components/post-card";
 import { nextCache } from "~/lib/next-cache";
 import { cacheKeys } from "~/lib/cache-keys";
+import { alias } from "drizzle-orm/pg-core";
 
 export const metadata: Metadata = {
   title: "Home"
@@ -52,11 +53,14 @@ async function HomeContents() {
           ? []
           : await db
               .selectDistinct({
-                id: ReplyTable.id,
+                id: PostsTable.id,
                 post_id: PostsTable.id
               })
-              .from(ReplyTable)
-              .innerJoin(PostsTable, eq(PostsTable.id, ReplyTable.parent_id))
+              .from(PostsTable)
+              .innerJoin(
+                alias(PostsTable, "parent"),
+                eq(PostsTable.id, PostsTable.parent_id)
+              )
               .where(sql`${PostsTable.id} in ${postid_list}`);
 
       const postList = posts.map((p) => {
