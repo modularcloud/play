@@ -82,7 +82,7 @@ async function SinglePost({ postId }: { postId: number }) {
         })
         .from(ReplyTable)
         .innerJoin(PostsTable, eq(PostsTable.id, ReplyTable.parent_id))
-        .innerJoin(UsersTable, eq(UsersTable.id, PostsTable.author_id))
+        .innerJoin(UsersTable, eq(UsersTable.id, ReplyTable.author_id))
         .where(eq(PostsTable.id, postId))
         .orderBy(asc(ReplyTable.created_at));
       return { post, replyList };
