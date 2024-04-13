@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, isNull, sql } from "drizzle-orm";
 import type { Metadata } from "next";
 import { PostsTable, UsersTable, db } from "~/lib/db";
 import { Loader } from "lucide-react";
@@ -45,6 +45,7 @@ async function HomeContents() {
         .from(PostsTable)
         .orderBy(desc(PostsTable.created_at))
         .innerJoin(UsersTable, eq(UsersTable.id, PostsTable.author_id))
+        .where(isNull(PostsTable.parent_id))
         .limit(50);
 
       const postid_list = posts.map((p) => p.id);
