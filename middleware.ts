@@ -18,30 +18,36 @@ export async function middleware(request: NextRequest) {
       session = wallet.id;
     }
     const body = await request.text();
-    await Sequencer.enqueue({
-      method: request.method,
-      path: request.nextUrl.pathname,
-      headers: {
-        "content-type": request.headers.get("content-type"),
-        "next-action": request.headers.get("next-action"),
-        "next-router-state-tree": request.headers.get(
-          "next-router-state-tree"
-        ),
-      },
-      body,
-      address
-    })
+    if (process.env.NODE_ENV === "production") {
+      await Sequencer.enqueue({
+        method: request.method,
+        path: request.nextUrl.pathname,
+        headers: {
+          "content-type": request.headers.get("content-type"),
+          "next-action": request.headers.get("next-action"),
+          "next-router-state-tree": request.headers.get(
+            "next-router-state-tree"
+          )
+        },
+        body,
+        address
+      });
+    }
+
     const response = await fetch(request.url, {
       method: request.method,
       headers: {
-        "cookie": `session=${session};`,
+        cookie: `session=${session};`,
         "content-type": request.headers.get("content-type"),
         "next-action": request.headers.get("next-action"),
-        "next-router-state-tree": request.headers.get("next-router-state-tree"),
+        "next-router-state-tree": request.headers.get("next-router-state-tree")
       } as any,
-      body,
+      body
     });
-    await Sequencer.next();
+
+    if (process.env.NODE_ENV === "production") {
+      await Sequencer.next();
+    }
     response.headers.set("set-cookie", `session=${session};`);
     return response;
   }
