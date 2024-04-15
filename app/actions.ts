@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { cacheKeys } from "~/lib/cache-keys";
-import { PostsTable, ReplyTable, UsersTable, db } from "~/lib/db";
+import { PostsTable, UsersTable, db } from "~/lib/db";
 import { getCurrentUser } from "~/lib/get-user";
 
 const getPointsSchema = z.object({
@@ -112,7 +112,7 @@ export async function createReply(_: any, formData: FormData) {
   const parentId = parseResult.data.parentId;
   const user = await getCurrentUser();
 
-  await db.insert(ReplyTable).values({
+  await db.insert(PostsTable).values({
     parent_id: parentId,
     contents: parseResult.data.contents,
     author_id: user.id,

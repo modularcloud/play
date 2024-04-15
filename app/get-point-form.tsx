@@ -53,6 +53,7 @@ export function GetPointsForm({ className, onClose }: GetPointsFormProps) {
             <input
               type="text"
               name="email"
+              autoFocus
               id="email"
               required
               placeholder="Enter email"

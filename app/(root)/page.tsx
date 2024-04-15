@@ -1,12 +1,13 @@
 import * as React from "react";
 
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, isNull, sql } from "drizzle-orm";
 import type { Metadata } from "next";
-import { PostsTable, ReplyTable, UsersTable, db } from "~/lib/db";
+import { PostsTable, UsersTable, db } from "~/lib/db";
 import { Loader } from "lucide-react";
 import { PostCard } from "~/components/post-card";
 import { nextCache } from "~/lib/next-cache";
 import { cacheKeys } from "~/lib/cache-keys";
+import { alias } from "drizzle-orm/pg-core";
 
 export const metadata: Metadata = {
   title: "Home"
@@ -44,6 +45,7 @@ async function HomeContents() {
         .from(PostsTable)
         .orderBy(desc(PostsTable.created_at))
         .innerJoin(UsersTable, eq(UsersTable.id, PostsTable.author_id))
+        .where(isNull(PostsTable.parent_id))
         .limit(50);
 
       const postid_list = posts.map((p) => p.id);
@@ -52,15 +54,14 @@ async function HomeContents() {
           ? []
           : await db
               .selectDistinct({
-                id: ReplyTable.id,
-                post_id: PostsTable.id
+                id: PostsTable.id,
+                parent_id: PostsTable.parent_id
               })
-              .from(ReplyTable)
-              .innerJoin(PostsTable, eq(PostsTable.id, ReplyTable.parent_id))
-              .where(sql`${PostsTable.id} in ${postid_list}`);
+              .from(PostsTable)
+              .where(sql`${PostsTable.parent_id} in ${postid_list}`);
 
       const postList = posts.map((p) => {
-        const replyCount = replyList.filter((r) => r.post_id === p.id).length;
+        const replyCount = replyList.filter((r) => r.parent_id === p.id).length;
 
         return {
           ...p,
