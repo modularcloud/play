@@ -1,4 +1,5 @@
-import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 import { createWallet, getAddress } from "./auth";
 import { Sequencer } from "./sequencer";
 
@@ -7,7 +8,8 @@ export async function middleware(request: NextRequest) {
   const fromSequencer =
     request.headers.get("x-sequencer") === process.env.SEQUENCER_SECRET;
   const readRequest = request.method === "GET" || request.method === "HEAD";
-  if (!fromSequencer && !readRequest) {
+
+  if (!fromSequencer) {
     let session = request.cookies.get("session")?.value;
     let address: string | null = null;
     if (session) {
@@ -17,8 +19,34 @@ export async function middleware(request: NextRequest) {
       address = wallet.walletAddress;
       session = wallet.id;
     }
+
+    if (readRequest) {
+      let response = NextResponse.next();
+
+      if (!request.cookies.get("session")?.value) {
+        request.cookies.set({
+          name: "session",
+          value: session
+        });
+
+        response = NextResponse.next({
+          request
+        });
+        response.cookies.set({
+          name: "session",
+          value: session,
+          httpOnly: true,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production"
+        });
+      }
+
+      return response;
+    }
+
     const body = await request.text();
-    if (process.env.NODE_ENV === "production") {
+
+    if (false) {
       await Sequencer.enqueue({
         method: request.method,
         path: request.nextUrl.pathname,
@@ -45,10 +73,9 @@ export async function middleware(request: NextRequest) {
       body
     });
 
-    if (process.env.NODE_ENV === "production") {
+    if (false) {
       await Sequencer.next();
     }
-    response.headers.set("set-cookie", `session=${session};`);
     return response;
   }
 }
