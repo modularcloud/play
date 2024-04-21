@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createWallet, getAddress } from "./auth";
-import { Sequencer } from "./sequencer";
+// import { Sequencer } from "./sequencer";
 
 export async function middleware(request: NextRequest) {
   const readRequest = request.method === "GET" || request.method === "HEAD";
