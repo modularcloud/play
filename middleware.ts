@@ -39,10 +39,16 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  if (
-    process.env.MODE === "replay" &&
-    request.headers.get("x-sequencer") === process.env.SEQUENCER_SECRET
-  ) {
+  if (process.env.MODE === "replay") {
+    if (request.headers.get("x-sequencer") !== process.env.SEQUENCER_SECRET) {
+      return Response.json(
+        {
+          success: false,
+          message: "Only sequencer can perform action in replay mode.",
+        },
+        { status: 401 }
+      );
+    }
     return NextResponse.next({
       request,
     });
