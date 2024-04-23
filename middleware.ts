@@ -39,6 +39,15 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  if (
+    process.env.MODE === "replay" &&
+    request.headers.get("x-sequencer") === process.env.SEQUENCER_SECRET
+  ) {
+    return NextResponse.next({
+      request,
+    });
+  }
+
   const body = await request.text();
 
   await Sequencer.enqueue({
